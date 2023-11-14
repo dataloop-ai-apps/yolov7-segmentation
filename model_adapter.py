@@ -3,14 +3,11 @@ import logging
 import os
 import torch
 from models.common import DetectMultiBackend
-from PIL import Image
-import shutil
-import uuid
-
-from utils.dataloaders import LoadImages
+import numpy as np
 from utils.general import (Profile, check_img_size, non_max_suppression, scale_coords)
 from utils.segment.general import process_mask
 from utils.torch_utils import select_device, smart_inference_mode
+from utils.augmentations import letterbox
 
 logger = logging.getLogger('YOLOv7-Seg-Adapter')
 
@@ -20,11 +17,15 @@ logger = logging.getLogger('YOLOv7-Seg-Adapter')
                               init_inputs={'model_entity': dl.Model})
 class ModelAdapter(dl.BaseModelAdapter):
     def __init__(self, model_entity=None):
+
+        logger.info(f"TORCH VERSION - {torch.__version__}")
+        logger.info(f"TORCH CUDA AVAILABLE - {torch.cuda.is_available()}")
+
         self.weights = None
         self.data = None
         self.imgsz = None
-        self.conf_thres = 0.25
-        self.iou_thres = 0.45
+        self.conf_thres = None
+        self.iou_thres = None
         self.max_det = 1000
         self.device = None
         super(ModelAdapter, self).__init__(model_entity=model_entity)
@@ -33,10 +34,15 @@ class ModelAdapter(dl.BaseModelAdapter):
         model_filename = self.configuration.get('weights_filename')
         self.weights = os.path.join(local_path, model_filename)
         self.data = self.configuration.get('data')
-        # Load model
-        self.device = select_device('')
-        self.model = DetectMultiBackend(self.weights, device=self.device, dnn=False, data=self.data, fp16=False)
+        device = self.configuration.get('device')
+        if device == 'gpu':
+            device = '0' if torch.cuda.is_available() else 'cpu'
 
+        # Load model
+        self.device = select_device(device)
+        self.model = DetectMultiBackend(self.weights, device=self.device, dnn=False, data=self.data, fp16=False)
+        self.conf_thres = self.configuration.get('conf_thres', 0.25)
+        self.iou_thres = self.configuration.get('iou_thres', 0.45)
         imgsz_w = self.configuration.get('imgsz_w', 1280)
         imgsz_h = self.configuration.get('imgsz_h', 1280)
         self.imgsz = check_img_size((imgsz_w, imgsz_h), s=self.model.stride)
@@ -46,12 +52,16 @@ class ModelAdapter(dl.BaseModelAdapter):
         logger.info("Model loaded successfully")
 
     @smart_inference_mode()
-    def run_inference(self, source):
-        source = str(source)
-        dataset = LoadImages(source, img_size=self.imgsz, stride=self.model.stride, auto=self.model.pt)
+    def run_inference(self, batch):
         seen, windows, dt = 0, [], (Profile(), Profile(), Profile())
         annotation_collections = []
-        for path, im, im0s, vid_cap, s in dataset:
+
+        for im0 in batch:
+            im = im0[:, :, [2, 1, 0]]
+            im = letterbox(im, self.imgsz, stride=self.model.stride, auto=self.model.pt)[0]  # padded resize
+            im = im.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
+            im = np.ascontiguousarray(im)  # contiguous
+
             annotation_collection = dl.AnnotationCollection()
             annotation_collections.append(annotation_collection)
             with dt[0]:
@@ -81,7 +91,6 @@ class ModelAdapter(dl.BaseModelAdapter):
 
             # Process predictions
             for i, det in enumerate(pred_):
-                p, im0, frame = path, im0s.copy(), getattr(dataset, 'frame', 0)
                 if len(det):
                     det_clone = det.clone()
                     det_clone_np = det_clone.cpu().numpy()
@@ -115,18 +124,18 @@ class ModelAdapter(dl.BaseModelAdapter):
         return annotation_collections
 
     def predict(self, batch, **kwargs):
-        uid = str(uuid.uuid4())
-        base_path = "{}".format(uid)
-        os.makedirs(base_path, exist_ok=True)
         try:
-            for i, img in enumerate(batch):
-                img = Image.fromarray(img)
-                img.save(os.path.join(base_path, str(i) + '.jpg'))
-
             with torch.no_grad():
-                return self.run_inference(source=base_path)
+                return self.run_inference(batch=batch)
 
         except Exception as e:
             print(e)
-        finally:
-            shutil.rmtree(base_path)
+
+
+if __name__ == "__main__":
+
+    # Test Locally
+    model = dl.models.get(model_id='')
+    item = dl.items.get(item_id='')
+    adapter = ModelAdapter(model_entity=model)
+    adapter.predict_items(items=[item])
