@@ -269,5 +269,5 @@ fabric.properties
 *.wmv
 *.webm
 __pycache__/
-
+artifacts/
 # End of https://www.toptal.com/developers/gitignore/api/images,pycharm+all,pycharm,data,video

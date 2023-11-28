@@ -60,7 +60,7 @@ def process_mask(protos, masks_in, bboxes, shape, upsample=False):
     downsampled_bboxes[:, 3] *= mh / ih
     downsampled_bboxes[:, 1] *= mh / ih
 
-    masks = crop(masks, downsampled_bboxes)  # CHW
+    # masks = crop(masks, downsampled_bboxes)  # CHW
     if upsample:
         masks = F.interpolate(masks[None], shape, mode='bilinear', align_corners=False)[0]  # CHW
     return masks.gt_(0.5)

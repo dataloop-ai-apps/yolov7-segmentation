@@ -9,7 +9,7 @@ def package_creation(project: dl.Project):
     metadata = dl.Package.get_ml_metadata(cls=ModelAdapter,
                                           default_configuration={
                                               'weights_filename': 'yolov7-seg.pt',
-                                              'data': 'data/custom_data.yaml',
+                                              'data': 'data/coco.yaml',
                                               'epochs': 5,
                                               'batch_size': 32,
                                               'imgsz_w': 1280,
@@ -18,7 +18,7 @@ def package_creation(project: dl.Project):
                                               'iou_thres': 0.45,
                                               'max_det': 1000,
                                               'device': 'cpu'},
-                                          output_type=[dl.AnnotationType.BOX, dl.AnnotationType.POLYGON]
+                                          output_type=dl.AnnotationType.POLYGON
                                           )
     modules = dl.PackageModule.from_entry_point(entry_point='model_adapter.py')
 
@@ -51,7 +51,7 @@ def model_creation(package: dl.Package, dataset: dl.Dataset):
                                       status='trained',
                                       scope='project',
                                       configuration={'weights_filename': 'yolov7-seg.pt',
-                                                     'data': 'data/custom_data.yaml',
+                                                     'data': 'data/coco.yaml',
                                                      'epochs': 5,
                                                      'batch_size': 32,
                                                      'imgsz_w': 1280,

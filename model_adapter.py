@@ -52,7 +52,7 @@ class ModelAdapter(dl.BaseModelAdapter):
         logger.info("Model loaded successfully")
 
     @smart_inference_mode()
-    def run_inference(self, batch):
+    def run_inference(self, batch, upload_bbox=False):
         seen, windows, dt = 0, [], (Profile(), Profile(), Profile())
         annotation_collections = []
 
@@ -94,33 +94,36 @@ class ModelAdapter(dl.BaseModelAdapter):
                 if len(det):
                     det_clone = det.clone()
                     det_clone_np = det_clone.cpu().numpy()
-
-                    masks = process_mask(proto[i], det[:, 6:], det[:, :4], im.shape[2:], upsample=True)  # HWC
-                    masks_np = masks.cpu().numpy()
-                    for current_mask_idx, current_mask in enumerate(masks_np):
+                    _masks = process_mask(proto[i], det[:, 6:], det[:, :4], im0.shape[:2], upsample=True)  # HWC
+                    _masks_np = _masks.cpu().numpy()
+                    for current_mask_idx, current_mask in enumerate(_masks_np):
                         label = self.model.names[int(det_clone_np[current_mask_idx][5])]
                         confidence = det_clone_np[current_mask_idx][4]
+                        if np.max(current_mask) == 0:
+                            continue
+
                         annotation_collection.add(annotation_definition=dl.Polygon.from_segmentation(mask=current_mask,
                                                                                                      label=label),
                                                   model_info={'name': self.model_entity.name,
                                                               'model_id': self.model_entity.id,
                                                               'confidence': confidence})
-                    det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
-                    pred_np = det.cpu().numpy()
+                    if upload_bbox is True:
+                        det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+                        pred_np = det.cpu().numpy()
 
-                    for current_pred in pred_np:
-                        label = self.model.names[int(current_pred[5])]
-                        confidence = current_pred[4]
-                        annotation_collection.add(annotation_definition=dl.Box(top=current_pred[1],
-                                                                               left=current_pred[0],
-                                                                               bottom=current_pred[3],
-                                                                               right=current_pred[2],
-                                                                               label=label,
-                                                                               ),
-                                                  model_info={'name': self.model_entity.name,
-                                                              'model_id': self.model_entity.id,
-                                                              'confidence': confidence}
-                                                  )
+                        for current_pred in pred_np:
+                            label = self.model.names[int(current_pred[5])]
+                            confidence = current_pred[4]
+                            annotation_collection.add(annotation_definition=dl.Box(top=current_pred[1],
+                                                                                   left=current_pred[0],
+                                                                                   bottom=current_pred[3],
+                                                                                   right=current_pred[2],
+                                                                                   label=label,
+                                                                                   ),
+                                                      model_info={'name': self.model_entity.name,
+                                                                  'model_id': self.model_entity.id,
+                                                                  'confidence': confidence}
+                                                      )
         return annotation_collections
 
     def predict(self, batch, **kwargs):
@@ -133,7 +136,6 @@ class ModelAdapter(dl.BaseModelAdapter):
 
 
 if __name__ == "__main__":
-
     # Test Locally
     model = dl.models.get(model_id='')
     item = dl.items.get(item_id='')
