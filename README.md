@@ -24,7 +24,7 @@ This repo is a model integration between [YOLOv7-Instance-Segmentation](https://
 
 ### Installing in the Platform
 
-To clone the model from our AI Library, review our [documentation]()
+To clone the model from our AI Library, review our [documentation](https://developers.dataloop.ai/tutorials/model_management/create_new_model_ui/chapter/)
 
 ### Installing via the SDK
 
