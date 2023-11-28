@@ -15,15 +15,6 @@
 *.vcf
 *.xml
 
-### Images ###
-# JPEG
-*.jpg
-*.jpeg
-*.jpe
-*.jif
-*.jfif
-*.jfi
-
 # JPEG 2000
 *.jp2
 *.j2k
@@ -45,9 +36,6 @@
 
 # Web P
 *.webp
-
-# Portable Network Graphics
-*.png
 
 # Animated Portable Network Graphics
 *.apng
