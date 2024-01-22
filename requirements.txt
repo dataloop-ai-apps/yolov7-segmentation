@@ -15,4 +15,4 @@ seaborn>=0.11.0
 filterpy
 # scikit-image
 thop>=0.1.1
-urllib.request
+urllib3==1.26.14
