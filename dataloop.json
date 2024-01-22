@@ -11,7 +11,7 @@
     "Computer Vision": "Semantic Segmentation",
     "Media Type": "Image"
   },
-  "codebaseZ": {
+  "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/yolov7-segmentation.git",
     "gitTag": "v0.2.5"
