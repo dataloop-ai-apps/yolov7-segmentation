@@ -8,6 +8,7 @@ from utils.general import (Profile, check_img_size, non_max_suppression, scale_c
 from utils.segment.general import process_mask
 from utils.torch_utils import select_device, smart_inference_mode
 from utils.augmentations import letterbox
+import urllib.request
 
 logger = logging.getLogger('YOLOv7-Seg-Adapter')
 
@@ -32,6 +33,15 @@ class ModelAdapter(dl.BaseModelAdapter):
 
     def load(self, local_path, **kwargs):
         model_filename = self.configuration.get('weights_filename')
+        checkpoint_url = self.configuration.get('checkpoint_url', None)
+
+        if not os.path.isfile(os.path.join(local_path, model_filename)):
+            if checkpoint_url is not None:
+                os.makedirs(local_path, exist_ok=True)
+                urllib.request.urlretrieve(checkpoint_url, os.path.join(local_path, 'yolov7-seg.pt'))
+            else:
+                raise Exception("checkpoints weights were not loaded! URL not found")
+
         self.weights = os.path.join(local_path, model_filename)
         self.data = self.configuration.get('data')
         device = self.configuration.get('device')
@@ -134,10 +144,3 @@ class ModelAdapter(dl.BaseModelAdapter):
         except Exception as e:
             print(e)
 
-
-if __name__ == "__main__":
-    # Test Locally
-    model = dl.models.get(model_id='')
-    item = dl.items.get(item_id='')
-    adapter = ModelAdapter(model_entity=model)
-    adapter.predict_items(items=[item])
