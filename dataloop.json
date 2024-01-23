@@ -82,7 +82,7 @@
         "name": "yolov7-segmentation",
         "moduleName": "yolov7-seg-module",
         "scope": "project",
-        "status": "pretrained",
+        "status": "pre-trained",
         "configuration": {
           "weights_filename": "yolov7-seg.pt",
           "checkpoint_url": "https://storage.googleapis.com/model-mgmt-snapshots/yolo-v7/yolov7-seg.pt",
