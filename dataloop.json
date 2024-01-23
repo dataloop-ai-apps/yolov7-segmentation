@@ -5,7 +5,7 @@
   "scope": "public",
   "description": "YOLOv7 Segmentation Model Application",
   "attributes": {
-    "Provider": "Dataloop",
+    "Provider": "Other",
     "License": "GPL 3.0",
     "Category": "Model",
     "Computer Vision": "Semantic Segmentation",
@@ -82,7 +82,7 @@
         "name": "yolov7-segmentation",
         "moduleName": "yolov7-seg-module",
         "scope": "project",
-        "status": "trained",
+        "status": "pretrained",
         "configuration": {
           "weights_filename": "yolov7-seg.pt",
           "checkpoint_url": "https://storage.googleapis.com/model-mgmt-snapshots/yolo-v7/yolov7-seg.pt",
