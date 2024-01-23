@@ -1,7 +1,7 @@
 {
   "name": "yolov7-segmentation",
   "displayName": "YOLOv7 Segmentation",
-  "version": "v0.2.8",
+  "version": "v0.2.9",
   "scope": "public",
   "description": "YOLOv7 Segmentation Model Application",
   "attributes": {
@@ -14,7 +14,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/yolov7-segmentation.git",
-    "gitTag": "v0.2.8"
+    "gitTag": "v0.2.9"
   },
   "components": {
     "computeConfigs": [
