@@ -122,26 +122,6 @@
             "displayName": "Predict Dataset",
             "displayIcon": "",
             "description": "Function to run YOLOv7-segmentation on a dataset"
-          },
-          {
-            "name": "train_model",
-            "input": [
-              {
-                "type": "Model",
-                "name": "model",
-                "description": "Dataloop Model Entity"
-              }
-            ],
-            "output":  [
-              {
-                "type": "Model",
-                "name": "model",
-                "description": "Dataloop Model Entity"
-              }
-            ],
-            "displayName": "Train Model",
-            "displayIcon": "",
-            "description": "Function to train YOLOv7-segmentation"
           }
         ]
       }
