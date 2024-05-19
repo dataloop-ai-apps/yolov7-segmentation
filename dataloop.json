@@ -51,6 +51,36 @@
         ],
         "functions": [
           {
+            "name": "evaluate_model",
+            "input": [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              },
+              {
+                "type": "Dataset",
+                "name": "dataset",
+                "description": "Dataloop Dataset Entity"
+              }
+            ],
+            "output": [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              },
+              {
+                "type": "Dataset",
+                "name": "dataset",
+                "description": "Dataloop Dataset Entity"
+              }
+            ],
+            "displayName": "Evaluate a Model",
+            "displayIcon": "",
+            "description": "Function to evaluate YOLOv7 Segmentation model performance"
+          },
+          {
             "name": "predict_items",
             "input": [
               {
@@ -92,6 +122,26 @@
             "displayName": "Predict Dataset",
             "displayIcon": "",
             "description": "Function to run YOLOv7-segmentation on a dataset"
+          },
+          {
+            "name": "train_model",
+            "input": [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              }
+            ],
+            "output":  [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              }
+            ],
+            "displayName": "Train Model",
+            "displayIcon": "",
+            "description": "Function to train YOLOv7-segmentation"
           }
         ]
       }
@@ -115,12 +165,6 @@
         },
         "inputType": "image",
         "outputType": "segment",
-        "supportedMethods": {
-          "load": true,
-          "predict": true,
-          "train": false,
-          "evaluate": false
-        },
         "description": "The YOLO v7 algorithm outperforms its predecessors in both speed and object detection accuracy. It requires significantly cheaper hardware compared to other neural networks. YOLO v7 features faster training times, even on smaller datasets, without the need for pre-trained weights.",
         "labels": [
           "person",
