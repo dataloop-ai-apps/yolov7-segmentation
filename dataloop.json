@@ -1,7 +1,7 @@
 {
   "name": "yolov7-segmentation",
   "displayName": "YOLOv7 Segmentation",
-  "version": "v0.2.10",
+  "version": "0.2.16",
   "scope": "public",
   "description": "YOLOv7 Segmentation Model Application",
   "attributes": {
@@ -14,15 +14,12 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/yolov7-segmentation.git",
-    "gitTag": "v0.2.10"
+    "gitTag": "0.2.16"
   },
   "components": {
     "computeConfigs": [
       {
         "name": "yolov7-seg-deploy",
-        "versions": {
-            "dtlpy": "1.89.11"
-        },
         "runtime": {
           "podType": "regular-m",
           "concurrency": 1,
@@ -50,6 +47,41 @@
           }
         ],
         "functions": [
+          {
+            "name": "evaluate_model",
+            "input": [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              },
+              {
+                "type": "Dataset",
+                "name": "dataset",
+                "description": "Dataloop Dataset Entity"
+              },
+              {
+                "type": "Json",
+                "name": "filters",
+                "description": "Dataloop DQL Filter"
+              }
+            ],
+            "output": [
+              {
+                "type": "Model",
+                "name": "model",
+                "description": "Dataloop Model Entity"
+              },
+              {
+                "type": "Dataset",
+                "name": "dataset",
+                "description": "Dataloop Dataset Entity"
+              }
+            ],
+            "displayName": "Evaluate a Model",
+            "displayIcon": "",
+            "description": "Function to evaluate YOLOv7 Segmentation model performance"
+          },
           {
             "name": "predict_items",
             "input": [
@@ -89,7 +121,7 @@
               }
             ],
             "output": [],
-            "displayName": "Predict Items",
+            "displayName": "Predict Dataset",
             "displayIcon": "",
             "description": "Function to run YOLOv7-segmentation on a dataset"
           }
@@ -115,12 +147,6 @@
         },
         "inputType": "image",
         "outputType": "segment",
-        "supportedMethods": {
-          "load": true,
-          "predict": true,
-          "train": false,
-          "evaluate": false
-        },
         "description": "The YOLO v7 algorithm outperforms its predecessors in both speed and object detection accuracy. It requires significantly cheaper hardware compared to other neural networks. YOLO v7 features faster training times, even on smaller datasets, without the need for pre-trained weights.",
         "labels": [
           "person",
