@@ -5,12 +5,7 @@
   "scope": "public",
   "description": "YOLOv7 Segmentation Model Application",
   "attributes": {
-    "Provider": "Other",
-    "Deployed By": "Dataloop",
-    "License": "GPL 3.0",
-    "Category": "Model",
-    "Computer Vision": "Semantic Segmentation",
-    "Media Type": "Image"
+    "License": "GPL 3.0"
   },
   "codebase": {
     "type": "git",
